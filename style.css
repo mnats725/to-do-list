@@ -1,0 +1,42 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.5rem;
+}
+
+.task_input input {
+  margin-right: 5px;
+}
+
+.task-container {
+  display: flex;
+  align-items: center;
+}
+
+.text-task {
+  font-size: 18px;
+  color: black;
+  margin-left: 8px;
+}
+
+.done-text {
+  color: black;
+  opacity: 0.3;
+  text-decoration: line-through;
+}
+
+img {
+  height: 20px;
+  width: 20px;
+  padding-left: 8px;
+}
