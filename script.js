@@ -4,7 +4,7 @@ let valueInput = "";
 let renameValue = "";
 let editOpened = false;
 
-window.onload = async function init() {
+window.onload = init = async () => {
   input = document.getElementById("text_input");
   input.addEventListener("change", updateValue);
   const resp = await fetch("http://localhost:8000/allTasks", {
@@ -103,39 +103,36 @@ render = () => {
 
 onEdit = (index) => {
   allTasks.forEach((elem) => {
-    if (!editOpened) {
+    if (editOpened) return;
+    else {
       allTasks[index].isEdit = true;
       renameValue = renameValue.value;
       editOpened = true;
       render();
     }
-    if (elem.isEdit) return 0;
+    if (elem.isEdit) return;
   });
 };
 
 onRename = async (index) => {
-  if (valueInput !== "" && valueInput !== " ") {
-    const resp = await fetch(
-      `http://localhost:8000/updateTask?id=${allTasks[index].id}`,
-      {
-        method: "PATCH",
+  if (valueInput == " " || valueInput == " ") return;
+  const resp = await fetch(`http://localhost:8000/updateTask`, {
+    method: "PATCH",
 
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify({
-          id: allTasks[index].id,
-          text: renameValue,
-          isCheck: allTasks[index].isCheck,
-        }),
-      }
-    );
-    editOpened = false;
-    const result = await resp.json();
-    allTasks = result.data;
-    render();
-  }
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify({
+      id: allTasks[index].id,
+      text: renameValue,
+      isCheck: allTasks[index].isCheck,
+    }),
+  });
+  editOpened = false;
+  const result = await resp.json();
+  allTasks = result.data;
+  render();
 };
 
 onDelete = async (index) => {
@@ -157,21 +154,18 @@ onDelete = async (index) => {
 };
 
 onChangeCheckBox = async (index) => {
-  const resp = await fetch(
-    `http://localhost:8000/updateTask?id=${allTasks[index].id}`,
-    {
-      method: "PATCH",
+  const resp = await fetch(`http://localhost:8000/updateTask`, {
+    method: "PATCH",
 
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({
-        id: allTasks[index].id,
-        isCheck: !allTasks[index].isCheck,
-      }),
-    }
-  );
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify({
+      id: allTasks[index].id,
+      isCheck: !allTasks[index].isCheck,
+    }),
+  });
   const result = await resp.json();
   allTasks = result.data;
   render();
