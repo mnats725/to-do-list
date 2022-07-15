@@ -17,26 +17,24 @@ window.onload = init = async () => {
 };
 
 onClickButton = async () => {
-  if (valueInput !== "" && valueInput !== " ") {
-    const resp = await fetch("http://localhost:8000/createTask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({
-        text: valueInput,
-        isCheck: false,
-      }),
-    });
-    const result = await resp.json();
-    allTasks = result.data;
-  }
-  valueInput = "";
-  input.value = "";
-  render();
+  if (valueInput == " " || valueInput == " ") return;
+  const resp = await fetch("http://localhost:8000/createTask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify({
+      text: valueInput,
+      isCheck: false,
+    }),
+  });
+  const result = await resp.json();
+  allTasks = result.data;
 };
-
+valueInput = "";
+input.value = "";
+render();
 updateValue = (event) => {
   valueInput = event.target.value;
   renameValue = event.target.value;
