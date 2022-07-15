@@ -17,24 +17,26 @@ window.onload = init = async () => {
 };
 
 onClickButton = async () => {
-  if (valueInput == " " || valueInput == " ") return;
-  const resp = await fetch("http://localhost:8000/createTask", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json;charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify({
-      text: valueInput,
-      isCheck: false,
-    }),
-  });
-  const result = await resp.json();
-  allTasks = result.data;
+  if (valueInput !== "" && valueInput !== " ") {
+    const resp = await fetch("http://localhost:8000/createTask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        text: valueInput,
+        isCheck: false,
+      }),
+    });
+    const result = await resp.json();
+    allTasks = result.data;
+  }
+  valueInput = "";
+  input.value = "";
+  render();
 };
-valueInput = "";
-input.value = "";
-render();
+
 updateValue = (event) => {
   valueInput = event.target.value;
   renameValue = event.target.value;
@@ -101,13 +103,11 @@ render = () => {
 
 onEdit = (index) => {
   allTasks.forEach((elem) => {
-    if (editOpened) return;
-    else {
-      allTasks[index].isEdit = true;
-      renameValue = renameValue.value;
-      editOpened = true;
-      render();
-    }
+    if (editOpened || elem.isEdit) return;
+    allTasks[index].isEdit = true;
+    renameValue = renameValue.value;
+    editOpened = true;
+    render();
     if (elem.isEdit) return;
   });
 };
