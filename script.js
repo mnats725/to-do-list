@@ -57,21 +57,15 @@ render = () => {
 
     const imageEdit = document.createElement("img");
     imageEdit.src = "img/edit.svg";
-    imageEdit.onclick = () => {
-      onEdit(index);
-    };
+    imageEdit.onclick = () => onEdit(index);
 
     const imageRename = document.createElement("img");
     imageRename.src = "img/done.svg";
-    imageRename.onclick = () => {
-      onRename(index);
-    };
+    imageRename.onclick = () => onRename(index);
 
     const imageDelete = document.createElement("img");
     imageDelete.src = "img/delete.svg";
-    imageDelete.onclick = () => {
-      onDelete(index);
-    };
+    imageDelete.onclick = () => onDelete(index);
 
     content.appendChild(container);
     container.appendChild(checkbox);
