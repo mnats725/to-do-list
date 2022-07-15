@@ -1,24 +1,37 @@
-let allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
+let allTasks = [];
 let input = "";
 let valueInput = "";
 let renameValue = "";
+let editOpened = false;
 
-window.onload = function init() {
+window.onload = async function init() {
   input = document.getElementById("text_input");
   input.addEventListener("change", updateValue);
+  const resp = await fetch("http://localhost:8000/allTasks", {
+    method: "GET",
+  });
+  let result = await resp.json();
+  allTasks = result.data;
+
   render();
 };
 
-onClickButton = () => {
+onClickButton = async () => {
   if (valueInput !== "" && valueInput !== " ") {
-    allTasks.push({
-      text: valueInput,
-      isCheck: false,
-      isEdit: false,
+    const resp = await fetch("http://localhost:8000/createTask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        text: valueInput,
+        isCheck: false,
+      }),
     });
+    const result = await resp.json();
+    allTasks = result.data;
   }
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
   valueInput = "";
   input.value = "";
   render();
@@ -89,28 +102,77 @@ render = () => {
 };
 
 onEdit = (index) => {
-  allTasks[index].isEdit = !allTasks[index].isEdit;
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
-  render();
+  allTasks.forEach((elem) => {
+    if (!editOpened) {
+      allTasks[index].isEdit = true;
+      renameValue = renameValue.value;
+      editOpened = true;
+      render();
+    }
+    if (elem.isEdit) return 0;
+  });
 };
 
-onRename = (index) => {
+onRename = async (index) => {
   if (valueInput !== "" && valueInput !== " ") {
-    allTasks[index].text = renameValue;
-    allTasks[index].isEdit = !allTasks[index].isEdit;
-    localStorage.setItem("tasks", JSON.stringify(allTasks));
+    const resp = await fetch(
+      `http://localhost:8000/updateTask?id=${allTasks[index].id}`,
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify({
+          id: allTasks[index].id,
+          text: renameValue,
+          isCheck: allTasks[index].isCheck,
+        }),
+      }
+    );
+    editOpened = false;
+    const result = await resp.json();
+    allTasks = result.data;
     render();
   }
 };
 
-onDelete = (index) => {
-  delete allTasks[index];
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
+onDelete = async (index) => {
+  const resp = await fetch(
+    `http://localhost:8000/deleteTask?id=${allTasks[index].id}`,
+    {
+      method: "DELETE",
+
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Access-Control-Allow-Origin": "*",
+      },
+    }
+  );
+  const result = await resp.json();
+  allTasks = result.data;
+
   render();
 };
 
-onChangeCheckBox = (index) => {
-  allTasks[index].isCheck = !allTasks[index].isCheck;
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
+onChangeCheckBox = async (index) => {
+  const resp = await fetch(
+    `http://localhost:8000/updateTask?id=${allTasks[index].id}`,
+    {
+      method: "PATCH",
+
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        id: allTasks[index].id,
+        isCheck: !allTasks[index].isCheck,
+      }),
+    }
+  );
+  const result = await resp.json();
+  allTasks = result.data;
   render();
 };
